@@ -248,9 +248,8 @@ Finally, the script runs <b>php artisan serve</b> to start the PHP web server, l
 `vi routes/index.php` Uncomment the Routes block.
 
 ## Save and lets build and run our container with the command below
-```
-docker-compose down && docker-compose up -d
-```
+`docker-compose down && docker-compose up -d`
+
 The above Docker Compose command stops and removes the containers, networks, and volumes created by the docker-compose up command and then starts the containers in the background. The docker-compose down command stops and removes the containers and any resources created by docker-compose up. The -d option for docker-compose up starts the containers in the background, so the logs are not displayed in the terminal.
 If sucessful, you will see something like this(this, you will if you ran the above command without -d):
 ![without-d](https://user-images.githubusercontent.com/99274632/217508471-f67ae3d5-7a3f-4c4b-bd1f-457a20b5cc2d.PNG)
