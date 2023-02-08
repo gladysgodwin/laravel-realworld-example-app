@@ -168,8 +168,8 @@ services:
       - 6379:6379
 volumes:
   db-data: ~
-  
 ```
+
 In the above code, we add php service to our docker-compose file. Let me explain:
 The first line, "version: '3.9'" specifies the version of the Docker Compose file format. Note; only one version is required in a docker-compose file.
 The "services" key refers to the list of services that will be run with Docker Compose. In this case, "php".
@@ -180,8 +180,10 @@ The "build" key within the "php" service defines the build context, target and a
 The working_dir is the directory where all command line operations will be executed from, by default.
 
 ### Lets write content in the Dockerfile
-``` cd docker
-vi Dockerfile```
+```
+cd docker
+vi Dockerfile
+```
 
 Enter the code below, I will explain shortly
 ```
@@ -203,8 +205,8 @@ COPY --from=composer:2.3.5 /usr/bin/composer /usr/bin/composer
 
 ENV PORT=8000
 ENTRYPOINT [ "docker/entrypoint.sh" ]
-
 ```
+
 ## Explanation
 This Dockerfile above builds a PHP image using the official PHP 8.1 base image. It then performs several operations:
     Updates the package index using apt-get update -y.
@@ -218,8 +220,7 @@ This Dockerfile above builds a PHP image using the official PHP 8.1 base image. 
     Sets the entry point to docker/entrypoint.sh.
 Remember we already referenced this file to be built under php service in our docker-compose file. Now lets write contents in our entrypoint.sh. This file will contain scripts to install composer and its dependencies and you can add any other code here. Add the following code to your docker/entrypoint.sh file.
 
-```
-#!/bin/bash
+```#!/bin/bash
 if [ ! -f "vendor/autoload.php" ]; then
 composer install --no-progress --no-interaction
 fi
@@ -237,21 +238,21 @@ php artisan route:clear
 
 php artisan serve --port=$PORT --host=0.0.0.0 --env=.env
 exec docker-php-entrypoint "$@"
-
 ```
+
 The above shell script is used to setup and run a Laravel PHP web application. The script checks if the vendor directory, which contains the Composer autoloader, exists. If it does not exist, it runs the composer install command to install the required dependencies. It then checks if the .env file exists. If it does not, it creates the .env file by copying the .env.example file.
-
 The script then runs several Artisan commands to set up the Laravel application: <b>migrate</b> to run database migrations, <b>key:generate</b> to generate an encryption key, <b>config:clear</b> to clear the configuration cache, and <b>route:clear</b> to clear the route cache.
-
 Finally, the script runs <b>php artisan serve</b> to start the PHP web server, listening on the port specified by the $PORT environment variable, and accessible from any IP address (0.0.0.0). The <b>exec</b> command is then used to run the docker-php-entrypoint script with the command line arguments passed to the script ("$@").
+
 ## Before running the command to build, Lets edit out routes/index.php file.
 `vi routes/index.php` Uncomment the Routes block.
 
 ## Save and lets build and run our container with the command below
-`docker-compose down && docker-compose up -d`
+```docker-compose down && docker-compose up -d```
 
 The above Docker Compose command stops and removes the containers, networks, and volumes created by the docker-compose up command and then starts the containers in the background. The docker-compose down command stops and removes the containers and any resources created by docker-compose up. The -d option for docker-compose up starts the containers in the background, so the logs are not displayed in the terminal.
 If sucessful, you will see something like this(this, you will if you ran the above command without -d):
+
 ![without-d](https://user-images.githubusercontent.com/99274632/217508471-f67ae3d5-7a3f-4c4b-bd1f-457a20b5cc2d.PNG)
 
 After building, you can check if all your containers are running by running `docker-compose ps`
